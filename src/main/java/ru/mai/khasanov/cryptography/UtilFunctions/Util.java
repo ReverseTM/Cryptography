@@ -1,5 +1,7 @@
 package ru.mai.khasanov.cryptography.UtilFunctions;
 
+import ru.mai.khasanov.cryptography.constants.Constants;
+
 public class Util {
 
     public static byte[] permutation(
@@ -38,6 +40,44 @@ public class Util {
             currentIndex++;
         }
 
+        return result;
+    }
+
+    public static byte[] Substitution(byte[] block)
+    {
+        byte[] result = {0, 0, 0, 0};
+
+        // Преобразовываем массив из 6 байтов в лонг
+        long longBlock = 0;
+        for (int i = 0; i < 6; ++i) {
+            longBlock = (longBlock << 8) | (block[i] & 0xFF);
+        }
+
+        // Итерируемся по каждому блоку по 6 бит
+        for (int i = 0; i < 8; i++)
+        {
+            // Достаём 6 бит
+            int bits = (int) ((longBlock >> ((7 - i) * 6)) & 0b111111);
+            int[] bitsArray = new int[6];
+
+            // Достаём значение каждого бита
+            for (int j = 5; j >= 0; --j) {
+                bitsArray[j] = (bits >> j) & 1;
+            }
+
+            // Находим номер строки и столбца
+            int row = (bitsArray[0] << 1) | bitsArray[5];
+            int col = (bitsArray[1] << 3)
+                    | (bitsArray[2] << 2)
+                    | (bitsArray[3] << 1)
+                    | (bitsArray[4]);
+
+            int value = Constants.F_S[i][row * 16 + col];
+
+            result[i / 2] |= (byte) ((i & 1) == 0
+                    ? value << 4
+                    : value);
+        }
         return result;
     }
 
