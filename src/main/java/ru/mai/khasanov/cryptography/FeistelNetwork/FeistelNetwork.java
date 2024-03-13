@@ -6,8 +6,6 @@ import ru.mai.khasanov.cryptography.interfaces.IEncrypt;
 import ru.mai.khasanov.cryptography.interfaces.IEncryptor;
 import ru.mai.khasanov.cryptography.interfaces.IKeyExtend;
 
-import java.util.Arrays;
-
 public class FeistelNetwork implements IEncryptor {
 
     private final IKeyExtend keyExtend;
