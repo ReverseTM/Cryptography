@@ -9,7 +9,7 @@ public class FeistelFunction implements IEncrypt {
     public byte[] encrypt(byte[] block, byte[] roundKey) {
         byte[] extendedBlock = Util.permutation(block, Constants.F_P, false, 1);
         byte[] xoredBlock = Util.xor(extendedBlock, roundKey);
-        byte[] transformedBlock = Util.Substitution(xoredBlock);
+        byte[] transformedBlock = Util.substitution(xoredBlock);
         return Util.permutation(transformedBlock, Constants.F_P, false, 1);
     }
 }

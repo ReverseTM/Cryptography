@@ -4,11 +4,11 @@ import lombok.Setter;
 import ru.mai.khasanov.cryptography.UtilFunctions.Util;
 import ru.mai.khasanov.cryptography.interfaces.IEncrypt;
 import ru.mai.khasanov.cryptography.interfaces.IEncryptor;
-import ru.mai.khasanov.cryptography.interfaces.IKeyExtend;
+import ru.mai.khasanov.cryptography.interfaces.IKeyExpand;
 
 public class FeistelNetwork implements IEncryptor {
 
-    private final IKeyExtend keyExtend;
+    private final IKeyExpand keyExtend;
 
     private final IEncrypt feistelFunction;
 
@@ -17,7 +17,7 @@ public class FeistelNetwork implements IEncryptor {
 
     private byte[][] roundKeys;
 
-    public FeistelNetwork(IKeyExtend keyExtend, IEncrypt feistelFunction) {
+    public FeistelNetwork(IKeyExpand keyExtend, IEncrypt feistelFunction) {
         this.keyExtend = keyExtend;
         this.feistelFunction = feistelFunction;
     }
