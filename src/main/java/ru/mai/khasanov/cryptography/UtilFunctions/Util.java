@@ -43,8 +43,12 @@ public class Util {
         return result;
     }
 
-    public static byte[] Substitution(byte[] block)
+    public static byte[] substitution(byte[] block)
     {
+        if (block == null) {
+            throw new RuntimeException("Null pointer encountered");
+        }
+
         byte[] result = {0, 0, 0, 0};
 
         // Преобразовываем массив из 6 байтов в лонг
