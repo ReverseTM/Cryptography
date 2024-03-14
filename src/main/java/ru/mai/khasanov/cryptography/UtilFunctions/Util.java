@@ -57,7 +57,7 @@ public class Util {
             longBlock = (longBlock << 8) | (block[i] & 0xFF);
         }
 
-        // Итерируемся по каждому блоку по 6 бит
+        // нтерпретируется
         for (int i = 0; i < 8; i++)
         {
             // Достаём 6 бит
@@ -93,6 +93,22 @@ public class Util {
             result[i] = (byte) (x[i] ^ y[i]);
         }
         return result;
+    }
+
+    public static int leftCycleShift(int num, int numBits, int shiftAmount) {
+        // Создаём маску для выделения (numBits) младших битов
+        int mask = (1 << numBits) - 1;
+        // Обнуляем ненужные старшие биты
+        num &= mask;
+        // Циклический сдвиг влево
+        return ((num << shiftAmount) | (num >>> (numBits - shiftAmount))) & mask;
+    }
+
+    public static int rightCycleShift(int num, int numBits, int shiftAmount) {
+        // Создаём маску для выделения (numBits) младших битов
+        int mask = (1 << numBits) - 1;
+        // Циклический сдвиг вправо
+        return (num >>> shiftAmount) | ((num << (numBits - shiftAmount)) & mask);
     }
 
     public static byte[] intToBytes(int value) {

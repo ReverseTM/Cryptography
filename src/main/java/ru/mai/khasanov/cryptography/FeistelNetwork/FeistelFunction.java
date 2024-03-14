@@ -7,9 +7,9 @@ import ru.mai.khasanov.cryptography.interfaces.IEncrypt;
 public class FeistelFunction implements IEncrypt {
     @Override
     public byte[] encrypt(byte[] block, byte[] roundKey) {
-        byte[] extendedBlock = Util.permutation(block, Constants.F_P, false, 1);
+        byte[] extendedBlock = Util.permutation(block, Constants.F_E, true, 1);
         byte[] xoredBlock = Util.xor(extendedBlock, roundKey);
         byte[] transformedBlock = Util.substitution(xoredBlock);
-        return Util.permutation(transformedBlock, Constants.F_P, false, 1);
+        return Util.permutation(transformedBlock, Constants.F_P, true, 1);
     }
 }
