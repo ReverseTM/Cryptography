@@ -7,14 +7,10 @@ import ru.mai.khasanov.cryptography.interfaces.IEncryptor;
 import ru.mai.khasanov.cryptography.interfaces.IKeyExpand;
 
 public class FeistelNetwork implements IEncryptor {
-
     private final IKeyExpand keyExtend;
-
     private final IEncrypt feistelFunction;
-
     @Setter
-    private int rounds;
-
+    protected int rounds;
     private byte[][] roundKeys;
 
     public FeistelNetwork(IKeyExpand keyExtend, IEncrypt feistelFunction) {
@@ -35,7 +31,7 @@ public class FeistelNetwork implements IEncryptor {
             L = R;
             R = tmp;
         }
-        R = Util.xor(L, feistelFunction.encrypt(R, roundKeys[rounds - 1]));
+        L = Util.xor(L, feistelFunction.encrypt(R, roundKeys[rounds - 1]));
 
         byte[] result = new byte[data.length];
 
@@ -53,7 +49,7 @@ public class FeistelNetwork implements IEncryptor {
         System.arraycopy(data, 0, L, 0, half);
         System.arraycopy(data, half, R, 0, half);
 
-        R = Util.xor(L, feistelFunction.encrypt(R, roundKeys[rounds - 1]));
+        L = Util.xor(L, feistelFunction.encrypt(R, roundKeys[rounds - 1]));
         for (int i = rounds - 2; i >= 0; --i) {
             byte[] tmp = Util.xor(R, feistelFunction.encrypt(L, roundKeys[i]));
             R = L;

@@ -1,6 +1,5 @@
 package ru.mai.khasanov.cryptography.ExpandKey;
 
-import lombok.AllArgsConstructor;
 import lombok.Setter;
 import ru.mai.khasanov.cryptography.UtilFunctions.Util;
 import ru.mai.khasanov.cryptography.constants.Constants;
@@ -8,8 +7,7 @@ import ru.mai.khasanov.cryptography.interfaces.IKeyExpand;
 
 @Setter
 public class KeyExpand implements IKeyExpand {
-
-    private int rounds;
+    private int rounds = 16;
     @Override
     public byte[][] genKeys(byte[] key) {
         byte[][] keys = new byte[rounds][];
