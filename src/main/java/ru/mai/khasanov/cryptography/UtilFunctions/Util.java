@@ -57,7 +57,7 @@ public class Util {
             longBlock = (longBlock << 8) | (block[i] & 0xFF);
         }
 
-        // нтерпретируется
+        // Интерпретируется
         for (int i = 0; i < 8; i++)
         {
             // Достаём 6 бит
@@ -109,23 +109,5 @@ public class Util {
         int mask = (1 << numBits) - 1;
         // Циклический сдвиг вправо
         return (num >>> shiftAmount) | ((num << (numBits - shiftAmount)) & mask);
-    }
-
-    public static byte[] intToBytes(int value) {
-        byte[] result = new byte[4];
-
-        result[0] = (byte) (value >> 24);
-        result[1] = (byte) (value >> 16);
-        result[2] = (byte) (value >> 8);
-        result[3] = (byte) value;
-
-        return result;
-    }
-
-    public static int bytesToInt(byte[] bytes) {
-        return (bytes[0] & 0xFF) << 24 |
-                (bytes[1] & 0xFF) << 16 |
-                (bytes[2] & 0xFF) << 8 |
-                (bytes[3] & 0xFF);
     }
 }
