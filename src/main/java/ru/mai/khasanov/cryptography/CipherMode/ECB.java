@@ -7,73 +7,37 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.IntStream;
 
 public class ECB extends ACipherMode {
-    public ECB(IEncryptor encryptor, byte[] IV, int blockLength) {
-        super(encryptor, IV, blockLength);
+    public ECB(IEncryptor encryptor, byte[] IV) {
+        super(encryptor, IV, encryptor.getBlockLength());
     }
 
     @Override
-    public byte[] encrypt(byte[] value) {
-        List<byte[]> blocks = null;
-        List<byte[]> result = new ArrayList<>();
-
-        ExecutorService executorService = Executors.newFixedThreadPool(blockLength);
-
-        List<Future<byte[]>> futures = new ArrayList<>();
-        for (int i = 0; i < blockLength; i++) {
-            int index = i;
-            futures.add(executorService.submit(() -> encryptor.encode(blocks.get(index))));
-        }
-
-        for (Future<byte[]> future : futures) {
-            try {
-                result.add(future.get());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-        executorService.shutdown();
-
-        return flattenByteArrayList(result);
+    public byte[] encrypt(byte[] data) {
+        return processData(data, true);
     }
 
     @Override
     public byte[] decrypt(byte[] data) {
-        List<byte[]> blocks = null;
-        List<byte[]> result = new ArrayList<>();
-
-        ExecutorService executorService = Executors.newFixedThreadPool(blockLength);
-
-        List<Future<byte[]>> futures = new ArrayList<>();
-        for (int i = 0; i < blockLength; i++) {
-            int index = i;
-            futures.add(executorService.submit(() -> encryptor.decode((blocks.get(index)))));
-        }
-
-        for (Future<byte[]> future : futures) {
-            try {
-                result.add(future.get());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-        executorService.shutdown();
-
-        return flattenByteArrayList(result);
+        return processData(data, false);
     }
 
-    private byte[] flattenByteArrayList(List<byte[]> list) {
-        int totalLength = list.stream().mapToInt(arr -> arr.length).sum();
-        byte[] result = new byte[totalLength];
+    private byte[] processData(byte[] data, boolean encrypt) {
+        byte[] result = new byte[data.length];
 
-        int currentIndex = 0;
-        for (byte[] arr : list) {
-            System.arraycopy(arr, 0, result, currentIndex, arr.length);
-            currentIndex += arr.length;
-        }
+        IntStream.range(0, data.length / blockLength)
+                .parallel()
+                .forEach(i -> {
+                    int startIndex = i * blockLength;
+                    byte[] block = new byte[blockLength];
+                    System.arraycopy(data, startIndex, block, 0, blockLength);
+                    byte[] processedBlock = encrypt ? encryptor.encode(block) : encryptor.decode(block);
+                    System.arraycopy(processedBlock, 0, result, startIndex, processedBlock.length);
+                });
 
         return result;
     }

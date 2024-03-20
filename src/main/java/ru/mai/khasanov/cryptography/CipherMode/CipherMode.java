@@ -9,7 +9,8 @@ public class CipherMode {
         CFB,
         OFB,
         CTR,
-        RD
+        RD,
+        WithoutMode
     }
 
     public static ACipherMode getInstance(
@@ -18,12 +19,13 @@ public class CipherMode {
             byte[] IV,
             Object... args) {
         return switch (mode) {
-            case ECB -> new ECB(encryptor, IV, 8);
+            case ECB -> new ECB(encryptor, IV);
             case CBC -> null;
             case CFB -> null;
             case OFB -> null;
             case CTR -> null;
             case RD -> null;
+            case WithoutMode -> new WithoutCipherMode(encryptor, null);
         };
     }
 }
