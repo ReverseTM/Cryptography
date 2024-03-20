@@ -71,4 +71,9 @@ public class FeistelNetwork implements IEncryptor {
     public void setKeys(byte[] key) {
         roundKeys = keyExtend.genKeys(key);
     }
+
+    @Override
+    public int getBlockLength() {
+        return 8;
+    }
 }

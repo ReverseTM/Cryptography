@@ -3,7 +3,6 @@ package ru.mai.khasanov.cryptography;
 import ru.mai.khasanov.cryptography.CipherMode.CipherMode;
 import ru.mai.khasanov.cryptography.DES.DES;
 import ru.mai.khasanov.cryptography.Padding.PaddingMode;
-import ru.mai.khasanov.cryptography.UtilFunctions.Util;
 import ru.mai.khasanov.cryptography.interfaces.IEncryptor;
 
 public class Main {
@@ -18,10 +17,17 @@ public class Main {
                 PaddingMode.Mode.Zeros,
                 null);
 
-        byte[] text = { 0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8 };
-        byte[][] result = new byte[1][];
+        String originalFile = "C:/Users/Reverse/Desktop/original.png";
+        String encryptedFile = "C:/Users/Reverse/Desktop/encrypted.txt";
+        String decryptedFile = "C:/Users/Reverse/Desktop/decrypted.png";
 
+        var start = System.currentTimeMillis();
 
+        context.encrypt(originalFile, encryptedFile);
+        context.decrypt(encryptedFile, decryptedFile);
 
+        var end = System.currentTimeMillis();
+
+        System.out.println("Time: " + (end - start) + " ms");
     }
 }

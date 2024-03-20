@@ -6,4 +6,5 @@ public interface IEncryptor {
     byte[] decode(byte[] data);
 
     void setKeys(byte[] key);
+    int getBlockLength();
 }

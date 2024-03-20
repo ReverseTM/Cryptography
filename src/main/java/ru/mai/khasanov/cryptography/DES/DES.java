@@ -29,4 +29,9 @@ public class DES implements IEncryptor {
     public void setKeys(byte[] key) {
         feistelNetwork.setKeys(key);
     }
+
+    @Override
+    public int getBlockLength() {
+        return feistelNetwork.getBlockLength();
+    }
 }
