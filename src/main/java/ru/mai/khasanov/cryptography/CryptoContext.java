@@ -7,6 +7,8 @@ import ru.mai.khasanov.cryptography.Padding.PaddingMode;
 import ru.mai.khasanov.cryptography.interfaces.IEncryptor;
 import ru.mai.khasanov.cryptography.interfaces.IPadding;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
@@ -27,11 +29,11 @@ public class CryptoContext {
             IEncryptor encryptor,
             CipherMode.Mode cypherMode,
             PaddingMode.Mode paddingMode,
-            byte[] IV,
-            Object... args) {
+            byte[] IV)
+    {
         blockLength = encryptor.getBlockLength();
         encryptor.setKeys(key);
-        cipherMode = CipherMode.getInstance(cypherMode, encryptor, IV, args);
+        cipherMode = CipherMode.getInstance(cypherMode, encryptor, IV);
         padding = PaddingMode.getInstance(paddingMode);
     }
 
@@ -56,7 +58,7 @@ public class CryptoContext {
         //asyncProcess(inputFile, outputFile, false);
     }
 
-    private void asyncProcess(String inputFile, String outputFile, boolean encrypt) throws IOException {
+    private void asyncProcess(String inputFile, String outputFile, boolean encrypt){
         if (inputFile == null || outputFile == null) {
             throw new RuntimeException("Input and output files cannot be null");
         }
@@ -65,22 +67,25 @@ public class CryptoContext {
         List<CompletableFuture<Void>> futures = new ArrayList<>();
         Map<Long, byte[]> cipherTextMap = new ConcurrentSkipListMap<>();
 
-        try (RandomAccessFile file = new RandomAccessFile(inputFile, "r")) {
+        try {
+            File file = new File(inputFile);
+            if (!file.exists()) {
+                throw new FileNotFoundException(inputFile);
+            }
             long fileLength = file.length();
 
             for (long readBytes = 0L; readBytes < fileLength; readBytes += BLOCK_SIZE) {
                 long currentReadBytes = readBytes;
                 CompletableFuture<Void> future = CompletableFuture
-                        .supplyAsync(() -> processFile(file, currentReadBytes, fileLength, encrypt), executorService)
-                        .thenAcceptAsync(result -> {
-                            cipherTextMap.put(result.getValue0(), result.getValue1());
-                        }, executorService);
+                        .supplyAsync(() -> processFile(inputFile, currentReadBytes, fileLength, encrypt), executorService)
+                        .thenAcceptAsync(result -> cipherTextMap.put(result.getValue0(), result.getValue1()), executorService);
                 futures.add(future);
             }
 
             CompletableFuture<Void> allOf = CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]));
             allOf.join();
         } catch (IOException e) {
+            System.out.println("reading file failed");
             throw new RuntimeException(e);
         }
 
@@ -98,12 +103,15 @@ public class CryptoContext {
             for (Map.Entry<Long, byte[]> entry : cipherTextMap.entrySet()) {
                 writeFile(output, entry.getValue());
             }
+        } catch (IOException e) {
+            System.out.println("writing file failed");
+            throw new RuntimeException(e);
         }
     }
 
-    private Pair<Long, byte[]> processFile(RandomAccessFile inputFile, long offset, long fileLength, boolean encrypt) {
-        try {
-            byte[] block = readBlock(inputFile, offset, fileLength);
+    private Pair<Long, byte[]> processFile(String inputFile, long offset, long fileLength, boolean encrypt) {
+        try (RandomAccessFile file = new RandomAccessFile(inputFile, "r")) {
+            byte[] block = readBlock(file, offset, fileLength);
             byte[][] processedBlock = new byte[1][];
 
             if (encrypt) {
