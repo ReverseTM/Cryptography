@@ -2,29 +2,27 @@ package ru.mai.khasanov.cryptography.Padding;
 
 import ru.mai.khasanov.cryptography.interfaces.IPadding;
 
+import java.security.SecureRandom;
 import java.util.Arrays;
 
-public class Zeros implements IPadding {
+public class ISO_10126 implements IPadding {
     @Override
     public byte[] applyPadding(byte[] data, int blockSize) {
         int paddingLength = blockSize - (data.length % blockSize);
+
+        byte[] paddingBytes = new byte[paddingLength];
+        new SecureRandom().nextBytes(paddingBytes);
+        paddingBytes[paddingLength - 1] = (byte) paddingLength;
+
         byte[] paddedInput = new byte[data.length + paddingLength];
         System.arraycopy(data, 0, paddedInput, 0, data.length);
+        System.arraycopy(paddingBytes, 0, paddedInput, data.length, paddingLength);
 
         return paddedInput;
     }
 
     @Override
     public byte[] removePadding(byte[] data) {
-        int lastNonZeroIndex = data.length - 1;
-        // Находим индекс последнего ненулевого байта
-        for (int i = data.length - 1; i >= 0; i--) {
-            if (data[i] != 0) {
-                lastNonZeroIndex = i;
-                break;
-            }
-        }
-
-        return Arrays.copyOf(data, lastNonZeroIndex + 1);
+        return Arrays.copyOf(data, data.length - data[data.length - 1]);
     }
 }

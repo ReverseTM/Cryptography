@@ -13,9 +13,9 @@ public class PaddingMode {
     public static IPadding getInstance(PaddingMode.Mode mode) {
         return switch (mode) {
             case Zeros -> new Zeros();
-            case ANSI_X_923 -> null;
-            case PKCS7 -> null;
-            case ISO_10126 -> null;
+            case ANSI_X_923 -> new ANSI_X_923();
+            case PKCS7 -> new PKCS7();
+            case ISO_10126 -> new ISO_10126();
         };
     }
 
