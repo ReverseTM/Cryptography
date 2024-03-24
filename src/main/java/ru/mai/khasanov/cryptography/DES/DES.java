@@ -15,14 +15,14 @@ public class DES implements IEncryptor {
     }
     @Override
     public byte[] encode(byte[] data) {
-        var cipherText = feistelNetwork.encode(Util.permutation(data, Constants.IP, true, 1));
-        return Util.permutation(cipherText, Constants.P, true, 1);
+        var cipherText = feistelNetwork.encode(Util.permutation(data, Constants.IP, false, 1));
+        return Util.permutation(cipherText, Constants.P, false, 1);
     }
 
     @Override
     public byte[] decode(byte[] data) {
-        var cipherText = feistelNetwork.decode(Util.permutation(data, Constants.IP, true, 1));
-        return Util.permutation(cipherText, Constants.P, true, 1);
+        var cipherText = feistelNetwork.decode(Util.permutation(data, Constants.IP, false, 1));
+        return Util.permutation(cipherText, Constants.P, false, 1);
     }
 
     @Override

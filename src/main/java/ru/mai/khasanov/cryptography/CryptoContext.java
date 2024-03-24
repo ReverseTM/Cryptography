@@ -38,10 +38,7 @@ public class CryptoContext {
     }
 
     public void encrypt(byte[] text, byte[][] cipherText) {
-        if (text.length % blockLength != 0) {
-            text = padding.applyPadding(text, blockLength);
-        }
-        cipherText[0] = cipherMode.encrypt(text);
+        cipherText[0] = cipherMode.encrypt(padding.applyPadding(text, blockLength));
     }
 
     public void decrypt(byte[] cipherText, byte[][] text) {
@@ -146,10 +143,8 @@ public class CryptoContext {
                     decrypt(block, processedBlock);
                 }
 
-                text.add(processedBlock[0]);
+                writeFile(outputFile, processedBlock[0], readBytes);
             }
-
-            writeFile(outputFile, text);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -177,8 +172,9 @@ public class CryptoContext {
         }
     }
 
-    private void writeFile(String outputFile, List<byte[]> bytes) throws IOException {
+    private void writeFile(String outputFile, byte[] bytes, long offset) throws IOException {
         try (RandomAccessFile output = new RandomAccessFile(outputFile, "rw")) {
+            output.seek(offset);
             for (var value : bytes) {
                 output.write(value);
             }

@@ -51,22 +51,22 @@ public class Util {
 
         byte[] result = {0, 0, 0, 0};
 
-        // Преобразовываем массив из 6 байтов в лонг
+        // Преобразовываем массив из 6 байтов в long
         long longBlock = 0;
         for (int i = 0; i < 6; ++i) {
             longBlock = (longBlock << 8) | (block[i] & 0xFF);
         }
 
-        // Интерпретируется
+        // Заменяем значениями из S блоков
         for (int i = 0; i < 8; i++)
         {
             // Достаём 6 бит
-            int bits = (int) ((longBlock >> ((7 - i) * 6)) & 0b111111);
+            int bits = (int) ((longBlock >> ((7 - i) * 6)) & 0xFF);
             int[] bitsArray = new int[6];
 
             // Достаём значение каждого бита
-            for (int j = 5; j >= 0; --j) {
-                bitsArray[j] = (bits >> j) & 1;
+            for (int j = 0; j < 6; ++j) {
+                bitsArray[j] = (bits >> (5 - j)) & 1;
             }
 
             // Находим номер строки и столбца
@@ -98,10 +98,8 @@ public class Util {
     public static int leftCycleShift(int num, int numBits, int shiftAmount) {
         // Создаём маску для выделения (numBits) младших битов
         int mask = (1 << numBits) - 1;
-        // Обнуляем ненужные старшие биты
-        num &= mask;
         // Циклический сдвиг влево
-        return ((num << shiftAmount) | (num >>> (numBits - shiftAmount))) & mask;
+        return (((num & mask) << shiftAmount) | (num >>> (numBits - shiftAmount))) & mask;
     }
 
     public static int rightCycleShift(int num, int numBits, int shiftAmount) {

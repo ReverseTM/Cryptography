@@ -1,11 +1,9 @@
 package ru.mai.khasanov.cryptography.ExpandKey;
 
-import lombok.Setter;
 import ru.mai.khasanov.cryptography.UtilFunctions.Util;
 import ru.mai.khasanov.cryptography.constants.Constants;
 import ru.mai.khasanov.cryptography.interfaces.IKeyExpand;
 
-@Setter
 public class KeyExpand implements IKeyExpand {
     private int rounds = 16;
 
@@ -27,11 +25,10 @@ public class KeyExpand implements IKeyExpand {
             }
         }
 
-
         byte[][] keys = new byte[rounds][];
 
         // Сжимающая перестановка
-        byte[] pKey = Util.permutation(key, Constants.PC_1, true, 1);
+        byte[] pKey = Util.permutation(key, Constants.PC_1, false, 1);
 
         // Делим ключ на 2 блока по 28 бит
         int C = ((pKey[0] & 0xFF) << 20)
@@ -39,7 +36,7 @@ public class KeyExpand implements IKeyExpand {
                 | ((pKey[2] & 0xFF) << 4)
                 | ((pKey[3] & 0xFF) >>> 4);
 
-        int D = (((pKey[3] & 0xFF) & 0x0F) << 24)
+        int D = ((pKey[3] & 0x0F) << 24)
                 | ((pKey[4] & 0xFF) << 16)
                 | ((pKey[5] & 0xFF) << 8)
                 | ((pKey[6] & 0xFF));
@@ -49,6 +46,7 @@ public class KeyExpand implements IKeyExpand {
             // Делаем циклические сдвиги
             C = Util.leftCycleShift(C, 28, Constants.SHIFTS[i]);
             D = Util.leftCycleShift(D, 28, Constants.SHIFTS[i]);
+
             // Склеиваем два блока в 1 блок
             long CD = ((long) C) << 28 | D;
 
@@ -58,7 +56,7 @@ public class KeyExpand implements IKeyExpand {
             }
 
             // Перестановка
-            keys[i] = Util.permutation(byteCD, Constants.PC_2, true, 1);
+            keys[i] = Util.permutation(byteCD, Constants.PC_2, false, 1);
         }
 
         return keys;
