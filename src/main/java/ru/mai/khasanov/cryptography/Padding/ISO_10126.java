@@ -8,7 +8,9 @@ import java.util.Arrays;
 public class ISO_10126 implements IPadding {
     @Override
     public byte[] applyPadding(byte[] data, int blockSize) {
-        int paddingLength = blockSize - (data.length % blockSize);
+        int paddingLength = (data.length % blockSize == 0)
+                ? blockSize
+                : blockSize - (data.length % blockSize);
 
         byte[] paddingBytes = new byte[paddingLength];
         new SecureRandom().nextBytes(paddingBytes);
