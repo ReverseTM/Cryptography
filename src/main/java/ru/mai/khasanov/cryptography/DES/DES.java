@@ -1,6 +1,6 @@
 package ru.mai.khasanov.cryptography.DES;
 
-import ru.mai.khasanov.cryptography.ExpandKey.KeyExpand;
+import ru.mai.khasanov.cryptography.ExpandKey.DESKeyExpand;
 import ru.mai.khasanov.cryptography.FeistelNetwork.FeistelFunction;
 import ru.mai.khasanov.cryptography.FeistelNetwork.FeistelNetwork;
 import ru.mai.khasanov.cryptography.UtilFunctions.Util;
@@ -11,7 +11,7 @@ public class DES implements IEncryptor {
     private final IEncryptor feistelNetwork;
 
     public DES() {
-        this.feistelNetwork = new FeistelNetwork(new KeyExpand(16), new FeistelFunction(), 16);
+        this.feistelNetwork = new FeistelNetwork(new DESKeyExpand(16), new FeistelFunction(), 16);
     }
     @Override
     public byte[] encode(byte[] data) {

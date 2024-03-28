@@ -1,7 +1,9 @@
 package ru.mai.khasanov.cryptography;
 
 import ru.mai.khasanov.cryptography.CipherMode.CipherMode;
+import ru.mai.khasanov.cryptography.DEAL.DEAL;
 import ru.mai.khasanov.cryptography.DES.DES;
+import ru.mai.khasanov.cryptography.ExpandKey.DEALKeyExpand;
 import ru.mai.khasanov.cryptography.Padding.PaddingMode;
 import ru.mai.khasanov.cryptography.UtilFunctions.IVGenerator;
 import ru.mai.khasanov.cryptography.interfaces.IEncryptor;
@@ -11,6 +13,11 @@ import java.util.Arrays;
 
 public class Main {
     public static void main(String[] args) {
+
+//        byte[] key = { 0x25, 0x25, 0x25, 0x25, 0x25, 0x25, 0x25, 0x25, 0x25, 0x25, 0x25, 0x25, 0x25, 0x25, 0x25, 0x25 };
+//        DEALKeyExpand keyExpand = new DEALKeyExpand(DEAL.Version.DEAL_128);
+//        keyExpand.genKeys(key);
+
         byte[] key = { 0x25, 0x25, 0x25, 0x25, 0x25, 0x25, 0x25, 0x25 };
         byte[] IV = { 0x1, 0x22, 0x3F, 0x0F, 0x22, 0x44, 0x44, 0x44 };
 
@@ -27,7 +34,7 @@ public class Main {
 //        String encryptedFile = "C:/Users/Reverse/Desktop/enc.txt";
 //        String decryptedFile = "C:/Users/Reverse/Desktop/dec.ipynb";
 
-        String originalFile = "C:/Users/Reverse/Desktop/video.mp4";
+        String originalFile = "C:/Users/Reverse/Desktop/video1.mp4";
         String encryptedFile = "C:/Users/Reverse/Desktop/enc.txt";
         String decryptedFile = "C:/Users/Reverse/Desktop/dec.mp4";
 

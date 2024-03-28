@@ -38,11 +38,17 @@ public class CryptoContext {
     }
 
     public void encrypt(byte[] text, byte[][] cipherText) {
+        System.out.println("Encrypt");
+        System.out.println("Text length: " + text.length);
         cipherText[0] = cipherMode.encrypt(padding.applyPadding(text, blockLength));
+        System.out.println("CipherText length: " + cipherText[0].length);
     }
 
     public void decrypt(byte[] cipherText, byte[][] text) {
+        System.out.println("Decrypt");
+        System.out.println("CipherText length: " + cipherText.length);
         text[0] = padding.removePadding(cipherMode.decrypt(cipherText));
+        System.out.println("Text length: " + text[0].length);
     }
 
     public void encrypt(String inputFile, String outputFile) {
@@ -70,8 +76,9 @@ public class CryptoContext {
                 throw new FileNotFoundException(inputFile);
             }
             long fileLength = file.length();
+            int blockSize = encrypt ? BLOCK_SIZE - blockLength : BLOCK_SIZE;
 
-            for (long readBytes = 0L; readBytes < fileLength; readBytes += BLOCK_SIZE) {
+            for (long readBytes = 0L; readBytes < fileLength; readBytes += blockSize) {
                 long currentReadBytes = readBytes;
                 CompletableFuture<Void> future = CompletableFuture
                         .supplyAsync(() -> processFile(inputFile, currentReadBytes, fileLength, encrypt), executorService)
@@ -108,7 +115,7 @@ public class CryptoContext {
 
     private Pair<Long, byte[]> processFile(String inputFile, long offset, long fileLength, boolean encrypt) {
         try (RandomAccessFile file = new RandomAccessFile(inputFile, "r")) {
-            byte[] block = readBlock(file, offset, fileLength);
+            byte[] block = readBlock(file, offset, fileLength, encrypt);
             byte[][] processedBlock = new byte[1][];
 
             if (encrypt) {
@@ -128,14 +135,16 @@ public class CryptoContext {
             throw new RuntimeException("Input and output files cannot be null");
         }
 
-        List<byte[]> text = new ArrayList<>();
+
+        int blockSize = encrypt ? BLOCK_SIZE - blockLength : BLOCK_SIZE;
         byte[][] processedBlock = new byte[1][];
 
         try (RandomAccessFile file = new RandomAccessFile(inputFile, "r")) {
             long fileLength = file.length();
-
-            for (long readBytes = 0L; readBytes < fileLength; readBytes += BLOCK_SIZE) {
-                var block = readBlock(file, readBytes, fileLength);
+            int i = 0;
+            for (long readBytes = 0L; readBytes < fileLength; readBytes += blockSize) {
+                System.out.println("step " + ++i);
+                var block = readBlock(file, readBytes, fileLength, encrypt);
 
                 if (encrypt) {
                     encrypt(block, processedBlock);
@@ -150,16 +159,18 @@ public class CryptoContext {
         }
     }
 
-    private byte[] readBlock(RandomAccessFile inputFile, long offset, long fileLength) throws IOException {
+    private byte[] readBlock(RandomAccessFile inputFile, long offset, long fileLength, boolean encrypt) throws IOException {
         inputFile.seek(offset);
         int bytesRead = 0;
 
+        int blockSize = encrypt ? BLOCK_SIZE - blockLength : BLOCK_SIZE;
+
         long unreadBytes = fileLength - offset;
-        int arrayLength = (int) (unreadBytes < BLOCK_SIZE ? unreadBytes : BLOCK_SIZE);
+        int arrayLength = (int) (unreadBytes < blockSize ? unreadBytes : blockSize);
 
         byte[] bytes = new byte[arrayLength];
 
-        while (bytesRead < BLOCK_SIZE && inputFile.getFilePointer() < fileLength) {
+        while (bytesRead < blockSize && inputFile.getFilePointer() < fileLength) {
             bytes[bytesRead++] = inputFile.readByte();
         }
 

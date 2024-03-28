@@ -4,10 +4,10 @@ import ru.mai.khasanov.cryptography.UtilFunctions.Util;
 import ru.mai.khasanov.cryptography.constants.Constants;
 import ru.mai.khasanov.cryptography.interfaces.IKeyExpand;
 
-public class KeyExpand implements IKeyExpand {
+public class DESKeyExpand implements IKeyExpand {
     private int rounds = 16;
 
-    public KeyExpand(int rounds) {
+    public DESKeyExpand(int rounds) {
         this.rounds = rounds;
     }
     @Override

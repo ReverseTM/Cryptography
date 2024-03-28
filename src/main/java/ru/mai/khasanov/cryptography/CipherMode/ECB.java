@@ -12,11 +12,13 @@ public class ECB extends ACipherMode {
     @Override
     public byte[] encrypt(byte[] data) {
         return processData(data, true);
+        //return process(data, true);
     }
 
     @Override
     public byte[] decrypt(byte[] data) {
         return processData(data, false);
+        //return process(data, true);
     }
 
     private byte[] processData(byte[] data, boolean encrypt) {
@@ -24,6 +26,20 @@ public class ECB extends ACipherMode {
 
         IntStream.range(0, data.length / blockLength)
                 .parallel()
+                .forEach(i -> {
+                    int startIndex = i * blockLength;
+                    byte[] block = new byte[blockLength];
+                    System.arraycopy(data, startIndex, block, 0, blockLength);
+                    byte[] processedBlock = encrypt ? encryptor.encode(block) : encryptor.decode(block);
+                    System.arraycopy(processedBlock, 0, result, startIndex, processedBlock.length);
+                });
+
+        return result;
+    }
+
+    private byte[] process(byte[] data, boolean encrypt) {
+        byte[] result = new byte[data.length];
+        IntStream.range(0, data.length / blockLength)
                 .forEach(i -> {
                     int startIndex = i * blockLength;
                     byte[] block = new byte[blockLength];
