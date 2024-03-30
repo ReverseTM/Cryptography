@@ -52,16 +52,15 @@ public class DEALKeyExpand implements IKeyExpand {
             keys[i] = CBC.encrypt(Util.xor(DESKeys[i] , keys[i - 1]));
         }
 
+        int offset = 0;
         for (int i = s; i < rounds; ++i) {
-            int sIndex = i % s;
-
-            long constant = 1L << (63 - (1 << sIndex));
+            long constant = 1L << (64 - (1 << offset));
             byte[] constantInBytes = new byte[8];
             for (int j = 0; j < 8; ++j) {
                 constantInBytes[j] = (byte) ((constant >>> ((7 - j) * 8)) & 0xFF);
             }
 
-            keys[i] = CBC.encrypt(Util.xor(Util.xor(DESKeys[sIndex], constantInBytes), keys[i - 1]));
+            keys[i] = CBC.encrypt(Util.xor(Util.xor(DESKeys[i % s], constantInBytes), keys[i - 1]));
         }
 
         return keys;

@@ -7,6 +7,8 @@ import ru.mai.khasanov.cryptography.UtilFunctions.Util;
 import ru.mai.khasanov.cryptography.constants.Constants;
 import ru.mai.khasanov.cryptography.interfaces.IEncryptor;
 
+import java.util.Arrays;
+
 public class DES implements IEncryptor {
     private final IEncryptor feistelNetwork;
 

@@ -12,18 +12,18 @@ public class DESKeyExpand implements IKeyExpand {
     }
     @Override
     public byte[][] genKeys(byte[] key) {
-        int countUnit = 0;
-        for (int i = 0; i < key.length * 8; ++i) {
-            if (((key[i / 8] >>> (i % 8)) & 1) == 1) {
-                countUnit++;
-            }
-            if ((i + 1) % 8 == 0) {
-                if ((countUnit & 1) == 0) {
-                    throw new RuntimeException("Invalid key");
-                }
-                countUnit = 0;
-            }
-        }
+//        int countUnit = 0;
+//        for (int i = 0; i < key.length * 8; ++i) {
+//            if (((key[i / 8] >>> (i % 8)) & 1) == 1) {
+//                countUnit++;
+//            }
+//            if ((i + 1) % 8 == 0) {
+//                if ((countUnit & 1) == 0) {
+//                    throw new RuntimeException("Invalid key");
+//                }
+//                countUnit = 0;
+//            }
+//        }
 
         byte[][] keys = new byte[rounds][];
 

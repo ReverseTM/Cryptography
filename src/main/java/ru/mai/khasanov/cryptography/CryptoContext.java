@@ -38,17 +38,11 @@ public class CryptoContext {
     }
 
     public void encrypt(byte[] text, byte[][] cipherText) {
-        System.out.println("Encrypt");
-        System.out.println("Text length: " + text.length);
         cipherText[0] = cipherMode.encrypt(padding.applyPadding(text, blockLength));
-        System.out.println("CipherText length: " + cipherText[0].length);
     }
 
     public void decrypt(byte[] cipherText, byte[][] text) {
-        System.out.println("Decrypt");
-        System.out.println("CipherText length: " + cipherText.length);
         text[0] = padding.removePadding(cipherMode.decrypt(cipherText));
-        System.out.println("Text length: " + text[0].length);
     }
 
     public void encrypt(String inputFile, String outputFile) {
@@ -141,9 +135,7 @@ public class CryptoContext {
 
         try (RandomAccessFile file = new RandomAccessFile(inputFile, "r")) {
             long fileLength = file.length();
-            int i = 0;
             for (long readBytes = 0L; readBytes < fileLength; readBytes += blockSize) {
-                System.out.println("step " + ++i);
                 var block = readBlock(file, readBytes, fileLength, encrypt);
 
                 if (encrypt) {

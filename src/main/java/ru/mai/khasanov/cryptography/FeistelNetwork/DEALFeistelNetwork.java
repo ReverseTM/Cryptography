@@ -1,5 +1,6 @@
 package ru.mai.khasanov.cryptography.FeistelNetwork;
 
+import ru.mai.khasanov.cryptography.DES.DESAdapter;
 import ru.mai.khasanov.cryptography.UtilFunctions.Util;
 import ru.mai.khasanov.cryptography.interfaces.IEncrypt;
 import ru.mai.khasanov.cryptography.interfaces.IEncryptor;
@@ -7,15 +8,15 @@ import ru.mai.khasanov.cryptography.interfaces.IKeyExpand;
 
 import java.util.Arrays;
 
-public class FeistelNetwork implements IEncryptor {
+public class DEALFeistelNetwork implements IEncryptor {
     private final IKeyExpand keyExtend;
-    private final IEncrypt feistelFunction;
+    private final IEncrypt function;
     protected int rounds;
     private byte[][] roundKeys;
 
-    public FeistelNetwork(IKeyExpand keyExtend, IEncrypt feistelFunction, int rounds) {
+    public DEALFeistelNetwork(IKeyExpand keyExtend, IEncrypt function, int rounds) {
         this.keyExtend = keyExtend;
-        this.feistelFunction = feistelFunction;
+        this.function = function;
         this.rounds = rounds;
     }
 
@@ -28,13 +29,12 @@ public class FeistelNetwork implements IEncryptor {
         System.arraycopy(data, 0, L, 0, half);
         System.arraycopy(data, half, R, 0, half);
 
-        // Выполняем 16 раундов шифрования
-        for (int i = 0; i < rounds - 1; ++i) {
-            byte[] tmp = Util.xor(L, feistelFunction.encrypt(R, roundKeys[i]));
-            L = R;
-            R = tmp;
+        // Выполняем r раундов шифрования
+        for (int i = 0; i < rounds; ++i) {
+            byte[] tmp = Util.xor(R, function.encrypt(L, roundKeys[i]));
+            R = L;
+            L = tmp;
         }
-        L = Util.xor(L, feistelFunction.encrypt(R, roundKeys[rounds - 1]));
 
         byte[] result = new byte[data.length];
 
@@ -53,12 +53,11 @@ public class FeistelNetwork implements IEncryptor {
         System.arraycopy(data, 0, L, 0, half);
         System.arraycopy(data, half, R, 0, half);
 
-        // Выполняем 16 раундов дешифрования
-        L = Util.xor(L, feistelFunction.encrypt(R, roundKeys[rounds - 1]));
-        for (int i = rounds - 2; i >= 0; --i) {
-            byte[] tmp = Util.xor(R, feistelFunction.encrypt(L, roundKeys[i]));
-            R = L;
-            L = tmp;
+        // Выполняем r раундов дешифрования
+        for (int i = rounds - 1; i >= 0; --i) {
+            byte[] tmp = Util.xor(L, function.encrypt(R, roundKeys[i]));
+            L = R;
+            R = tmp;
         }
 
         byte[] result = new byte[data.length];

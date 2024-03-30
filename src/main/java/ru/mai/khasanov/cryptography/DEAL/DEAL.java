@@ -2,7 +2,7 @@ package ru.mai.khasanov.cryptography.DEAL;
 
 import ru.mai.khasanov.cryptography.DES.DESAdapter;
 import ru.mai.khasanov.cryptography.ExpandKey.DEALKeyExpand;
-import ru.mai.khasanov.cryptography.FeistelNetwork.FeistelNetwork;
+import ru.mai.khasanov.cryptography.FeistelNetwork.DEALFeistelNetwork;
 import ru.mai.khasanov.cryptography.interfaces.IEncryptor;
 
 public class DEAL implements IEncryptor {
@@ -21,18 +21,16 @@ public class DEAL implements IEncryptor {
             case DEAL_256 -> this.rounds = 8;
         }
 
-        feistelNetwork = new FeistelNetwork(new DEALKeyExpand(version), new DESAdapter(), rounds);
+        this.feistelNetwork = new DEALFeistelNetwork(new DEALKeyExpand(version), new DESAdapter(), rounds);
     }
 
     @Override
     public byte[] encode(byte[] data) {
-        // TODO ADAPT FOR FEISTEL NETWORK
         return feistelNetwork.encode(data);
     }
 
     @Override
     public byte[] decode(byte[] data) {
-        // TODO ADAPT FOR FEISTEL NETWORK
         return feistelNetwork.decode(data);
     }
 
@@ -43,6 +41,6 @@ public class DEAL implements IEncryptor {
 
     @Override
     public int getBlockLength() {
-        return 0;
+        return 16;
     }
 }
