@@ -1,6 +1,6 @@
 package ru.mai.khasanov.cryptography.DEAL;
 
-import ru.mai.khasanov.cryptography.DES.DESAdapter;
+import ru.mai.khasanov.cryptography.RoundFunction.DESAdapter;
 import ru.mai.khasanov.cryptography.ExpandKey.DEALKeyExpand;
 import ru.mai.khasanov.cryptography.FeistelNetwork.DEALFeistelNetwork;
 import ru.mai.khasanov.cryptography.interfaces.IEncryptor;

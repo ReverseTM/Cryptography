@@ -2,7 +2,7 @@ package ru.mai.khasanov.cryptography.interfaces;
 
 
 // По сути функция фейстеля
-public interface IEncrypt {
+public interface IConvert {
 
-    byte[] encrypt(byte[] block, byte[] roundKey);
+    byte[] convert(byte[] block, byte[] roundKey);
 }

@@ -37,6 +37,8 @@ public class CryptoContext {
         padding = PaddingMode.getInstance(paddingMode);
     }
 
+
+    // передавать количество потоков для выполнения, дробить вхохные байты на двумерные массивы по n блоков, где n это количество потоков, затем передавать режиму шифрования. Уменьшить создание новых массивов, использовать передаваемые. Переделать параллельность с помощью future. Применять паддинг только к последнему блоку. В режимах шифрования можно складывать новый блок для ксора в IV.
     public void encrypt(byte[] text, byte[][] cipherText) {
         cipherText[0] = cipherMode.encrypt(padding.applyPadding(text, blockLength));
     }
@@ -128,7 +130,6 @@ public class CryptoContext {
         if (inputFile == null || outputFile == null) {
             throw new RuntimeException("Input and output files cannot be null");
         }
-
 
         int blockSize = encrypt ? BLOCK_SIZE - blockLength : BLOCK_SIZE;
         byte[][] processedBlock = new byte[1][];

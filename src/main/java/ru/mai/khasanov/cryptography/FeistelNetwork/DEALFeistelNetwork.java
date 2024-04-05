@@ -1,20 +1,17 @@
 package ru.mai.khasanov.cryptography.FeistelNetwork;
 
-import ru.mai.khasanov.cryptography.DES.DESAdapter;
 import ru.mai.khasanov.cryptography.UtilFunctions.Util;
-import ru.mai.khasanov.cryptography.interfaces.IEncrypt;
+import ru.mai.khasanov.cryptography.interfaces.IConvert;
 import ru.mai.khasanov.cryptography.interfaces.IEncryptor;
 import ru.mai.khasanov.cryptography.interfaces.IKeyExpand;
 
-import java.util.Arrays;
-
 public class DEALFeistelNetwork implements IEncryptor {
     private final IKeyExpand keyExtend;
-    private final IEncrypt function;
+    private final IConvert function;
     protected int rounds;
     private byte[][] roundKeys;
 
-    public DEALFeistelNetwork(IKeyExpand keyExtend, IEncrypt function, int rounds) {
+    public DEALFeistelNetwork(IKeyExpand keyExtend, IConvert function, int rounds) {
         this.keyExtend = keyExtend;
         this.function = function;
         this.rounds = rounds;
@@ -31,7 +28,7 @@ public class DEALFeistelNetwork implements IEncryptor {
 
         // Выполняем r раундов шифрования
         for (int i = 0; i < rounds; ++i) {
-            byte[] tmp = Util.xor(R, function.encrypt(L, roundKeys[i]));
+            byte[] tmp = Util.xor(R, function.convert(L, roundKeys[i]));
             R = L;
             L = tmp;
         }
@@ -55,7 +52,7 @@ public class DEALFeistelNetwork implements IEncryptor {
 
         // Выполняем r раундов дешифрования
         for (int i = rounds - 1; i >= 0; --i) {
-            byte[] tmp = Util.xor(L, function.encrypt(R, roundKeys[i]));
+            byte[] tmp = Util.xor(L, function.convert(R, roundKeys[i]));
             L = R;
             R = tmp;
         }

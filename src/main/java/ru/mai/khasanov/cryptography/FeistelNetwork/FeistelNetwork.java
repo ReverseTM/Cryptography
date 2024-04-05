@@ -1,19 +1,17 @@
 package ru.mai.khasanov.cryptography.FeistelNetwork;
 
 import ru.mai.khasanov.cryptography.UtilFunctions.Util;
-import ru.mai.khasanov.cryptography.interfaces.IEncrypt;
+import ru.mai.khasanov.cryptography.interfaces.IConvert;
 import ru.mai.khasanov.cryptography.interfaces.IEncryptor;
 import ru.mai.khasanov.cryptography.interfaces.IKeyExpand;
 
-import java.util.Arrays;
-
 public class FeistelNetwork implements IEncryptor {
     private final IKeyExpand keyExtend;
-    private final IEncrypt feistelFunction;
+    private final IConvert feistelFunction;
     protected int rounds;
     private byte[][] roundKeys;
 
-    public FeistelNetwork(IKeyExpand keyExtend, IEncrypt feistelFunction, int rounds) {
+    public FeistelNetwork(IKeyExpand keyExtend, IConvert feistelFunction, int rounds) {
         this.keyExtend = keyExtend;
         this.feistelFunction = feistelFunction;
         this.rounds = rounds;
@@ -30,11 +28,11 @@ public class FeistelNetwork implements IEncryptor {
 
         // Выполняем 16 раундов шифрования
         for (int i = 0; i < rounds - 1; ++i) {
-            byte[] tmp = Util.xor(L, feistelFunction.encrypt(R, roundKeys[i]));
+            byte[] tmp = Util.xor(L, feistelFunction.convert(R, roundKeys[i]));
             L = R;
             R = tmp;
         }
-        L = Util.xor(L, feistelFunction.encrypt(R, roundKeys[rounds - 1]));
+        L = Util.xor(L, feistelFunction.convert(R, roundKeys[rounds - 1]));
 
         byte[] result = new byte[data.length];
 
@@ -54,9 +52,9 @@ public class FeistelNetwork implements IEncryptor {
         System.arraycopy(data, half, R, 0, half);
 
         // Выполняем 16 раундов дешифрования
-        L = Util.xor(L, feistelFunction.encrypt(R, roundKeys[rounds - 1]));
+        L = Util.xor(L, feistelFunction.convert(R, roundKeys[rounds - 1]));
         for (int i = rounds - 2; i >= 0; --i) {
-            byte[] tmp = Util.xor(R, feistelFunction.encrypt(L, roundKeys[i]));
+            byte[] tmp = Util.xor(R, feistelFunction.convert(L, roundKeys[i]));
             R = L;
             L = tmp;
         }

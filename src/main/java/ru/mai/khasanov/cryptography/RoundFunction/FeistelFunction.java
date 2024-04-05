@@ -1,12 +1,12 @@
-package ru.mai.khasanov.cryptography.FeistelNetwork;
+package ru.mai.khasanov.cryptography.RoundFunction;
 
 import ru.mai.khasanov.cryptography.UtilFunctions.Util;
 import ru.mai.khasanov.cryptography.constants.Constants;
-import ru.mai.khasanov.cryptography.interfaces.IEncrypt;
+import ru.mai.khasanov.cryptography.interfaces.IConvert;
 
-public class FeistelFunction implements IEncrypt {
+public class FeistelFunction implements IConvert {
     @Override
-    public byte[] encrypt(byte[] block, byte[] roundKey) {
+    public byte[] convert(byte[] block, byte[] roundKey) {
         // Расширяющая перестановка
         byte[] extendedBlock = Util.permutation(block, Constants.F_E, false, 1);
         // XOR с раундовым ключом
